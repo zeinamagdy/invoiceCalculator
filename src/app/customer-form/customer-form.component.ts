@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../services/customer.service';
-import { Customer } from '../customer';
+import {  SharingDateService } from '../services/sharing-date.service';
+import { Customer, CustomerJSON } from '../customer';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
+const DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'';
+const CUSTOMERS_KEY = 'customers';
+const SELECTED_ID_KEY = 'selected_customer';
+const START_DATE_KEY = 'start_date';
+const END_DATE_KEY = 'end_date';
 
 @Component({
   selector: 'app-customer-form',
@@ -11,7 +17,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./customer-form.component.css']
 })
 export class CustomerFormComponent implements OnInit {
-  private static readonly DATE_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'';
   customers: Customer[];
   selectedCustomer: Customer;
   selectedDate: any;
@@ -23,25 +28,38 @@ export class CustomerFormComponent implements OnInit {
   constructor (
     private service: CustomerService,
     private datePipe: DatePipe,
-    private route: Router
+    private route: Router,
+    private saveState: SharingDateService
   ) { }
 
   ngOnInit() {
     this.getAll();
+    // TODO: get start and end date from storage
   }
+
   getAll() {
-    this.service.getAllCustomers()
-      .subscribe(response => {
-        this.customers = response;
-      });
+    const cachedDate = this.saveState.get(CUSTOMERS_KEY);
+    if (cachedDate) {
+      this.customers = cachedDate.map((it: CustomerJSON) => Customer.fromJSON(it));
+    } else {
+      this.service.getAllCustomers()
+        .subscribe(response => {
+          this.customers = response;
+          this.saveState.set(CUSTOMERS_KEY, this.customers);
+        });
+    }
   }
-  processed() {
+
+  selectCustmer() {
     this.customerId = this.selectedCustomer.id;
-    console.log('this.rangeDates', this.rangeDates);
-    this.startDate = this.datePipe.transform(this.rangeDates[0], CustomerFormComponent.DATE_FORMAT);
-    this.endDate = this.datePipe.transform(this.rangeDates[1], CustomerFormComponent.DATE_FORMAT);
-    console.log('this.startDate', this.startDate);
-    console.log('this.endDate', this.endDate);
+    this.saveState.set(SELECTED_ID_KEY, this.customerId);
+  }
+
+  processed() {
+    this.startDate = this.datePipe.transform(this.rangeDates[0], DATE_FORMAT);
+    this.endDate = this.datePipe.transform(this.rangeDates[1], DATE_FORMAT);
+    this.saveState.set(START_DATE_KEY, this.startDate);
+    this.saveState.set(END_DATE_KEY, this.endDate);
     this.route.navigate(['calculator'],
       { queryParams:
         { customer: this.customerId, startDate: this.startDate, endDate: this.endDate }

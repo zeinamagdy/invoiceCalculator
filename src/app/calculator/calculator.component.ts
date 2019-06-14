@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrdersService } from '../services/orders.service';
+import {  SharingDateService } from '../services/sharing-date.service';
 import { ActivatedRoute } from '@angular/router';
 import { Order } from '../order';
 
@@ -17,10 +18,12 @@ export class CalculatorComponent implements OnInit {
   tableColumns: any[];
   totalAmount: number;
   ordersCount: number;
-  constructor( private service: OrdersService,
-    private activatedRoute: ActivatedRoute
-  ) {
-  }
+  cashedDate: Order[];
+  constructor(
+    private service: OrdersService,
+    private activatedRoute: ActivatedRoute,
+    private saveState: SharingDateService
+  ) {}
 
   ngOnInit() {
     this.tableColumns = [
@@ -36,17 +39,33 @@ export class CalculatorComponent implements OnInit {
       this.startDate = params['startDate'];
       this.endDate = params['endDate'];
     });
-    this.getCustomerOrders();
+    // const cashedData: Order[] = this.saveState.getUserSettings('orders');
+    const cashedData = Object.assign(new Array<Order>(), this.saveState.getUserSettings('orders'));
+    console.log('cashed', cashedData);
+    if ( cashedData.length !== 0 ) {
+      this.orders = cashedData;
+      this.totalAmount = this.getTotalPrice();
+      this.ordersCount = this.orders.length;
+    } else {
+      this.getCustomerOrders();
+    }
+    // this.saveState.getUserSettings('totalAmount');
+    // this.saveState.getUserSettings('ordersCount');
   }
   getCustomerOrders() {
-    this.service.getCustomerOrders(this.customerId, this.startDate, this.endDate).subscribe(response => {
+    this.service.getCustomerOrders(
+      this.customerId,
+      this.startDate,
+      this.endDate).subscribe(response => {
       this.orders = response;
+      this.saveState.setSettings('orders', this.orders);
       this.totalAmount = this.getTotalPrice();
       this.ordersCount = this.orders.length;
     });
   }
-  getTotalPrice(): number {
-    return this.orders.reduce((sum, i) => sum + Number(i.charge_customer.total_price), 0);
-}
 
+  getTotalPrice(): number {
+    return this.orders.reduce(
+      (sum, i) => sum + Number(i.charge_customer.total_price), 0);
+  }
 }

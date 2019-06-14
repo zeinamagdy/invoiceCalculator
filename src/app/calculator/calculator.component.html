@@ -15,7 +15,11 @@
       </h5>
     </div>
   <div class = "listOrder">
-    <p-table [columns] = "tableColumns" [value] = "orders" [paginator] = "true" [rows] = "10">
+    <p-table 
+      [columns] = "tableColumns"
+      [value] = "orders"
+      [paginator] = "true" 
+      [rows] = "10">
       <ng-template pTemplate = "header" let-columns>
           <tr>
               <th *ngFor = "let col of columns">
@@ -23,13 +27,6 @@
               </th>
           </tr>
       </ng-template>
-      <!-- <ng-template pTemplate = "body" let-rowData let-columns = "columns">
-          <tr>
-              <td *ngFor = "let col of columns">
-                  {{rowData[col.field]}}
-              </td>
-          </tr>
-      </ng-template> -->
       <ng-template pTemplate="body" let-order>
         <tr>
           <td>
