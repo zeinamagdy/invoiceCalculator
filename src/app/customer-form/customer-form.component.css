@@ -1,0 +1,14 @@
+.customer{
+    width: 42%;
+    display: inline-block;
+    margin-left: 10px;
+}
+.date{
+    margin-left: 20px;
+}
+.inputValidate{
+    margin-left: 20px;
+    width:42%;
+    margin-top: 10px;
+    margin-left: 34%;
+}

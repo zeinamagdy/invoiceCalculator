@@ -1,0 +1,54 @@
+<div class="container">
+    <div>
+      <h5>
+        <b> Date Range: </b>
+        <span>From {{ startDate| date: 'dd/MM/yyyy' }}</span>
+        <span> To {{ endDate| date: 'dd/MM/yyyy' }}</span>
+      </h5>
+      <h5>
+        <b> Total Amount: </b> 
+        <span>{{totalAmount}}</span>
+      </h5>
+      <h5>
+        <b> Number of orders: </b> 
+        <span>{{ordersCount}}</span>
+      </h5>
+    </div>
+  <div class = "listOrder">
+    <p-table [columns] = "tableColumns" [value] = "orders" [paginator] = "true" [rows] = "10">
+      <ng-template pTemplate = "header" let-columns>
+          <tr>
+              <th *ngFor = "let col of columns">
+                  {{col.header}}
+              </th>
+          </tr>
+      </ng-template>
+      <!-- <ng-template pTemplate = "body" let-rowData let-columns = "columns">
+          <tr>
+              <td *ngFor = "let col of columns">
+                  {{rowData[col.field]}}
+              </td>
+          </tr>
+      </ng-template> -->
+      <ng-template pTemplate="body" let-order>
+        <tr>
+          <td>
+            {{order.recipient.name}}
+          </td>
+          <td>
+              {{order.recipient.email}}
+            </td>
+            <td>
+              <span style='display:block' *ngFor = "let item of order.items">
+                - {{item.name}}
+              </span>
+            </td>
+            <td> {{order.delivery.courier}} {{order.delivery.method}}</td>
+            <td>{{order.getTotalPrice()}}</td>
+            <td>{{order.created_at| date: 'dd/MM/yyyy'}}</td>
+        </tr>
+    </ng-template>
+    </p-table>
+  </div>
+  
+</div>

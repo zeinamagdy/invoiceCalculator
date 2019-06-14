@@ -1,0 +1,46 @@
+  <div class="container">
+  <form role="form" 
+    class="text-center col-md-8"
+    (ngSubmit)="f.form.valid && processed()"
+    #f = "ngForm" novalidate>
+    <div class = "form-group">
+      <label for = "selectUser">Customers</label>
+      <select id = "selectUser" required
+        class = "form-control customer" 
+        [(ngModel)] = "selectedCustomer"
+        #customer="ngModel" 
+        name = 'customer'> 
+        <option *ngFor = "let c of customers" [ngValue]="c">
+            {{c.name}}
+          </option>
+      </select>
+    </div>
+    <div *ngIf="f.submitted && customer.invalid"
+      class="alert alert-danger inputValidate">
+        <div *ngIf="customer.errors.required">
+          Cusromer is required.Please choose one.
+        </div>
+    </div>
+    <div class = "form-group">
+      <label for = "date">Date</label>
+      <p-calendar 
+        class="date"  required
+        name = "dateRange"
+        #dateRange="ngModel" 
+        [(ngModel)]="rangeDates" 
+        showIcon = "true"
+        selectionMode="range"
+        [readonlyInput]="true">
+      </p-calendar>
+      <div *ngIf="f.submitted && dateRange.invalid"
+      class="alert alert-danger inputValidate">
+        <div *ngIf="dateRange.errors.required">
+            DateRange is required.Please choose one.
+        </div>
+    </div>
+    </div>
+    <button class = "btn btn-primary " type="submit">
+      Processed
+    </button>
+  </form>
+</div>

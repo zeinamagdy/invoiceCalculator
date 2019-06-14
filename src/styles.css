@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+body .ui-inputtext{
+    height: 105%;
+    width: 275px;
+    margin-left: 25px;
+}
+.ui-inputtext:hover{
+    outline: none;
+}
