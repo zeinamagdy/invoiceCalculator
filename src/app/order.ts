@@ -11,8 +11,18 @@ export class Order {
     public getTotalPrice(): number {
         return this.items.reduce((sum, i) => sum + Number(i.total_price.amount), 0);
     }
+
+    static fromJSON(json: OrderJSON): Order {
+      const order = Object.create(Order.prototype);
+      return Object.assign(order, json);
+    }
+
+    toJSON(): OrderJSON {
+      return Object.assign({}, this);
+    }
 }
-class OrderItem {
+
+export class OrderItem {
     id: string;
     name: string;
     quantity: number;
@@ -20,4 +30,13 @@ class OrderItem {
         currency: string,
         amount: number
     }
+}
+
+export interface OrderJSON {
+    id: string,
+    recipient: {name: string, email: string},
+    delivery: {courier: string, method: string},
+    charge_customer: {currency: string, total_price: string},
+    created_at: Date,
+    items: Array<OrderItem>
 }

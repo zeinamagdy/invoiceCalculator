@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { OrdersService } from '../services/orders.service';
 import {  SharingDateService } from '../services/sharing-date.service';
 import { ActivatedRoute } from '@angular/router';
-import { Order } from '../order';
+import { Order, OrderJSON } from '../order';
 
+const ORDERS_KEY = 'orders_';
 
 @Component({
   selector: 'app-calculator',
@@ -11,7 +12,7 @@ import { Order } from '../order';
   styleUrls: ['./calculator.component.css']
 })
 export class CalculatorComponent implements OnInit {
-  customerId: any;
+  customerId: number;
   startDate: any;
   endDate: any;
   orders: Order[];
@@ -19,6 +20,7 @@ export class CalculatorComponent implements OnInit {
   totalAmount: number;
   ordersCount: number;
   cashedDate: Order[];
+
   constructor(
     private service: OrdersService,
     private activatedRoute: ActivatedRoute,
@@ -39,28 +41,26 @@ export class CalculatorComponent implements OnInit {
       this.startDate = params['startDate'];
       this.endDate = params['endDate'];
     });
-    // const cashedData: Order[] = this.saveState.getUserSettings('orders');
-    const cashedData = Object.assign(new Array<Order>(), this.saveState.getUserSettings('orders'));
-    console.log('cashed', cashedData);
-    if ( cashedData.length !== 0 ) {
-      this.orders = cashedData;
+    const cachedData = Object.assign(new Array<Order>(), this.saveState.get(ORDERS_KEY + this.customerId));
+    if (cachedData.length !== 0) {
+      this.orders = cachedData.map((it: OrderJSON) => Order.fromJSON(it));
       this.totalAmount = this.getTotalPrice();
       this.ordersCount = this.orders.length;
     } else {
-      this.getCustomerOrders();
+      this.fetchCustomerOrders();
     }
-    // this.saveState.getUserSettings('totalAmount');
-    // this.saveState.getUserSettings('ordersCount');
   }
-  getCustomerOrders() {
+
+  fetchCustomerOrders() {
     this.service.getCustomerOrders(
       this.customerId,
       this.startDate,
-      this.endDate).subscribe(response => {
-      this.orders = response;
-      this.saveState.setSettings('orders', this.orders);
-      this.totalAmount = this.getTotalPrice();
-      this.ordersCount = this.orders.length;
+      this.endDate
+      ).subscribe(response => {
+        this.orders = response;
+        this.saveState.set(ORDERS_KEY + this.customerId, this.orders);
+        this.totalAmount = this.getTotalPrice();
+        this.ordersCount = this.orders.length;
     });
   }
 

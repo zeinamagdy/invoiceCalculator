@@ -34,13 +34,17 @@ export class CustomerFormComponent implements OnInit {
 
   ngOnInit() {
     this.getAll();
-    // TODO: get start and end date from storage
   }
 
   getAll() {
-    const cachedDate = this.saveState.get(CUSTOMERS_KEY);
-    if (cachedDate) {
-      this.customers = cachedDate.map((it: CustomerJSON) => Customer.fromJSON(it));
+    const cachedData = this.saveState.get(CUSTOMERS_KEY);
+    if (cachedData) {
+      this.customers = cachedData.map((it: CustomerJSON) => Customer.fromJSON(it));
+      this.selectedCustomer = this.customers.find(it => it.id == this.saveState.get(SELECTED_ID_KEY));
+      this.rangeDates = [
+        new Date(this.saveState.get(START_DATE_KEY)), 
+        new Date(this.saveState.get(END_DATE_KEY))
+      ];
     } else {
       this.service.getAllCustomers()
         .subscribe(response => {
@@ -58,12 +62,11 @@ export class CustomerFormComponent implements OnInit {
   processed() {
     this.startDate = this.datePipe.transform(this.rangeDates[0], DATE_FORMAT);
     this.endDate = this.datePipe.transform(this.rangeDates[1], DATE_FORMAT);
-    this.saveState.set(START_DATE_KEY, this.startDate);
-    this.saveState.set(END_DATE_KEY, this.endDate);
+    this.saveState.set(START_DATE_KEY, this.rangeDates[0]);
+    this.saveState.set(END_DATE_KEY, this.rangeDates[1]);
     this.route.navigate(['calculator'],
       { queryParams:
         { customer: this.customerId, startDate: this.startDate, endDate: this.endDate }
       });
   }
-
 }

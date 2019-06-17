@@ -15,7 +15,7 @@ export class Customer {
     }
 }
 
-interface CustomerJSON {
+export interface CustomerJSON {
   id: string;
   name: string;
   email: string;
