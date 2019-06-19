@@ -40,11 +40,12 @@ export class CustomerFormComponent implements OnInit {
     const cachedData = this.saveState.get(CUSTOMERS_KEY);
     if (cachedData) {
       this.customers = cachedData.map((it: CustomerJSON) => Customer.fromJSON(it));
-      this.selectedCustomer = this.customers.find(it => it.id == this.saveState.get(SELECTED_ID_KEY));
-      this.rangeDates = [
-        new Date(this.saveState.get(START_DATE_KEY)),
-        new Date(this.saveState.get(END_DATE_KEY))
-      ];
+      this.selectedCustomer = this.customers.find(it => it.id === this.saveState.get(SELECTED_ID_KEY));
+      const startDate = this.saveState.get(START_DATE_KEY);
+      const endDate = this.saveState.get(END_DATE_KEY);
+      if (startDate && endDate) {
+        this.rangeDates = [new Date(startDate), new Date(endDate) ];
+      }
     } else {
       this.service.getAllCustomers()
         .subscribe(response => {
@@ -68,5 +69,9 @@ export class CustomerFormComponent implements OnInit {
       { queryParams:
         { customer: this.customerId, startDate: this.startDate, endDate: this.endDate }
       });
+  }
+  clearData() {
+    this.saveState.cleanAll();
+    location.reload();
   }
 }
