@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CustomerService } from '../services/customer.service';
 import {  SharingDateService } from '../services/sharing-date.service';
-import { Customer, CustomerJSON } from '../customer';
+import { Customer, CustomerJSON } from '../entites/customer';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -42,7 +42,7 @@ export class CustomerFormComponent implements OnInit {
       this.customers = cachedData.map((it: CustomerJSON) => Customer.fromJSON(it));
       this.selectedCustomer = this.customers.find(it => it.id == this.saveState.get(SELECTED_ID_KEY));
       this.rangeDates = [
-        new Date(this.saveState.get(START_DATE_KEY)), 
+        new Date(this.saveState.get(START_DATE_KEY)),
         new Date(this.saveState.get(END_DATE_KEY))
       ];
     } else {

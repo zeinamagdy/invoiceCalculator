@@ -1,3 +1,7 @@
+.customerForm {
+    margin-top: 100px;
+    margin-left: 180px;
+}
 .customer {
     width: 42%;
     display: inline-block;
@@ -11,4 +15,8 @@
     width:42%;
     margin-top: 10px;
     margin-left: 34%;
+}
+.btnProcessed{
+    margin-left: 50px;
+    margin-top: 20px;
 }

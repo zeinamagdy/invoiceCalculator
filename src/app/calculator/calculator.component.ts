@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { OrdersService } from '../services/orders.service';
 import {  SharingDateService } from '../services/sharing-date.service';
 import { ActivatedRoute } from '@angular/router';
-import { Order, OrderJSON } from '../order';
+import { Order, OrderJSON } from '../entites/order';
 
 const ORDERS_KEY = 'orders_';
 
